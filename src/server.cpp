@@ -25,8 +25,25 @@ bool check_exit(const char* buffer, size_t len) {
            *(buffer + 3) == 't';
 }
 
+bool send_all(int sock, const char* data, size_t len) {
+    size_t sent_total = 0;
+    while (sent_total < len) {
+        ssize_t sent = send(sock, data + sent_total, len - sent_total, 0);
+        if (sent <= 0) {
+            return false;
+        }
+        sent_total += static_cast<size_t>(sent);
+    }
+    return true;
+}
+
 int start_client(int client_sock){
     char buffer[BUFFER_SIZE];
+
+    struct timeval tv{};
+    tv.tv_sec = 300;
+    tv.tv_usec = 0;
+    setsockopt(client_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
     while(true){
         ssize_t bytes = recv(client_sock, &buffer[0], BUFFER_SIZE, 0);       
