@@ -53,7 +53,9 @@ int start_client(int client_sock){
         if(check_exit(buffer, static_cast<size_t>(bytes))){
             break;
         }
-        send(client_sock, buffer, bytes, 0);
+        if(!send_all(client_sock,buffer, static_cast<size_t>(bytes))){
+            break;
+        }
     }
     close(client_sock);
     return 0;
