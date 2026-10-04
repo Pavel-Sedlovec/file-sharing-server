@@ -8,6 +8,7 @@ public:
     virtual ~IConnection() = default;
     virtual bool send(const char* data, size_t len) = 0;
     virtual void close() = 0;
+    virtual int get_fd() = 0;
 };
 
 class IProtocolHandler {
