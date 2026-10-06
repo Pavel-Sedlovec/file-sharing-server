@@ -12,5 +12,5 @@ bool FtpHandler::onData(const char* data, size_t len, IConnection& conn) {
 void FtpHandler::onDisconnect() {
 }
 
-FtpHandler::~ftp_protocol() {
+FtpHandler::~FtpHandler() {
 }

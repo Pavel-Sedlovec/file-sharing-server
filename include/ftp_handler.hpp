@@ -12,26 +12,7 @@ public:
     bool onData(const char* data, size_t len, IConnection& conn) override;
     void onDisconnect() override;
 
-    ~ftp_protocol() override;
-};
-
-struct Command
-{
-    std::string name;
-    std::string arg;
-};
-
-
-class CommandBuffer{
-private:
-    char** _buffer;
-    int _size;
-public:
-    CommandBuffer(int size = 2048);
-    void resize();
-    bool check_resize();
-    void set_data(char* data, size_t len);
-    Command get_data();
+    ~FtpHandler() override;
 };
 
 #endif

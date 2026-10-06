@@ -10,6 +10,7 @@ constexpr int BACKLOG_QUEUE = 5;
 constexpr int THREAD_POOL_SIZE = 5;
 
 void server_stop(int sig);
+bool send_all(int sock, const char* data, size_t len);
 bool check_exit(const char* buffer, size_t len);
 int start_client(int client_sock);
 void setup_signals();

@@ -7,6 +7,8 @@
 #include <signal.h>
 #include <atomic>
 #include <thread>
+#include "tcp_connection.hpp"
+#include "fabric.hpp"
 
 std::atomic<bool> stop_server{false};
 
@@ -45,6 +47,11 @@ int start_client(int client_sock){
     tv.tv_usec = 0;
     setsockopt(client_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
+    tcp_connection conn(client_sock);
+    IProtocolHandler* handler = make_ftpHandler();
+
+    handler->onConnect(conn);
+
     while(true){
         ssize_t bytes = recv(client_sock, &buffer[0], BUFFER_SIZE, 0);       
         if(bytes <= 0){
@@ -53,11 +60,14 @@ int start_client(int client_sock){
         if(check_exit(buffer, static_cast<size_t>(bytes))){
             break;
         }
-        if(!send_all(client_sock,buffer, static_cast<size_t>(bytes))){
+
+        if (!handler->onData(buffer, static_cast<size_t>(bytes), conn)) {
             break;
         }
     }
-    close(client_sock);
+    handler->onDisconnect();
+    delete handler;
+    conn.close();
     return 0;
 }
 
