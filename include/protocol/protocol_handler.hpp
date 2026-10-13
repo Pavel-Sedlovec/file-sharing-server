@@ -2,14 +2,7 @@
 #define PROTOCOL_HANDLER_HPP
 
 #include <cstddef>
-
-class IConnection {
-public:
-    virtual ~IConnection() = default;
-    virtual bool send(const char* data, size_t len) = 0;
-    virtual void close() = 0;
-    virtual int get_fd() = 0;
-};
+#include "protocol/connection_interfaces.hpp"
 
 class IProtocolHandler {
 public:
