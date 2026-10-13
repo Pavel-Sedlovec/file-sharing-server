@@ -1,8 +1,8 @@
 #ifndef FABRIC_HPP
 #define FABRIC_HPP
 
-#include "protocol_handler.hpp"
-#include "ftp_handler.hpp"
+#include "protocol/protocol_handler.hpp"
+#include "protocol/ftp_handler.hpp"
 
 IProtocolHandler* make_ftpHandler(){
     FtpHandler* protocol = new FtpHandler();

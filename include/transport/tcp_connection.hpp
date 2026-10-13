@@ -1,7 +1,7 @@
 #ifndef TCP_CONNECTION_HPP
 #define TCP_CONNECTION_HPP
 
-#include "protocol_handler.hpp"
+#include "protocol/protocol_handler.hpp"
 #include "server.hpp"
 
 class tcp_connection : public IConnection
