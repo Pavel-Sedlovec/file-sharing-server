@@ -35,6 +35,7 @@ private:
     bool handlePasv(IConnection& conn);
     bool handleStor(const std::string& arg, IConnection& conn);
     bool handleRetr(const std::string& arg, IConnection& conn);
+    bool handleDele(const std::string& arg, IConnection& conn);
     bool handleList(IConnection& conn);
     bool loggedIn(IConnection& conn);
 };
