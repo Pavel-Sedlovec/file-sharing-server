@@ -30,6 +30,7 @@ private:
     bool handleUser(const std::string& arg, IConnection& conn);
     bool handlePass(const std::string& arg, IConnection& conn);
     bool handlePwd(IConnection& conn);
+    bool handleType(const std::string& arg, IConnection& conn);
     bool handleQuit(IConnection& conn);
     bool handleSite(const std::string& arg, IConnection& conn);
     bool handlePasv(IConnection& conn);
@@ -38,6 +39,9 @@ private:
     bool handleDele(const std::string& arg, IConnection& conn);
     bool handleList(IConnection& conn);
     bool loggedIn(IConnection& conn);
+
+    bool handleCwd(IConnection& conn);
+    bool handleSyst(IConnection& conn);
 };
 
 #endif

@@ -46,6 +46,18 @@ bool FtpHandler::handlePwd(IConnection& conn) {
     return true;
 }
 
+bool FtpHandler::handleType(const std::string& arg, IConnection& conn) {
+    std::istringstream input(arg);
+    std::string subcommand;
+    input >> subcommand;
+    if (upperCommand(subcommand) != "A" && upperCommand(subcommand) != "I") {
+        sendResponse(conn, 501, "Usage: TYPE <subcommand>");
+        return true;
+    }
+    sendResponse(conn, 200, "Type set to OK");
+    return true;
+}
+
 bool FtpHandler::handleSite(const std::string& arg, IConnection& conn) {
     std::istringstream input(arg);
     std::string subcommand, username, password;
@@ -55,6 +67,7 @@ bool FtpHandler::handleSite(const std::string& arg, IConnection& conn) {
         return true;
     }
     const std::string registered = service_->registerUser(username, password);
+    
     if (registered.empty()) {
         sendResponse(conn, 550, "Registration failed");
         return true;
@@ -67,4 +80,15 @@ bool FtpHandler::handleQuit(IConnection& conn) {
     state_ = SessionState::UPDATE;
     sendResponse(conn, 221, "Goodbye");
     return false;
+}
+
+
+bool FtpHandler::handleCwd(IConnection& conn) {
+    sendResponse(conn, 250, "Directory successfully changed.");
+    return true;
+}
+
+bool FtpHandler::handleSyst(IConnection& conn) {
+    sendResponse(conn, 215, "UNIX Type: L8");
+    return true;
 }

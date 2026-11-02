@@ -48,6 +48,7 @@ bool FtpHandler::handleCommand(const Command& cmd, IConnection& conn) {
     if (name == "USER") return handleUser(cmd.arg, conn);
     if (name == "PASS") return handlePass(cmd.arg, conn);
     if (name == "PWD") return handlePwd(conn);
+    if (name == "TYPE") return handleType(cmd.arg, conn);
     if (name == "SITE") return handleSite(cmd.arg, conn);
     if (name == "PASV") return handlePasv(conn);
     if (name == "STOR") return handleStor(cmd.arg, conn);
@@ -55,6 +56,9 @@ bool FtpHandler::handleCommand(const Command& cmd, IConnection& conn) {
     if (name == "DELE") return handleDele(cmd.arg, conn);
     if (name == "LIST") return handleList(conn);
     if (name == "QUIT") return handleQuit(conn);
+
+    if (name == "CWD") return handleCwd(conn);
+    if (name == "SYST") return handleSyst(conn);
     sendResponse(conn, 502, "Command not implemented: " + name);
     return true;
 }
