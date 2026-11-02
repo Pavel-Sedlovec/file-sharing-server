@@ -1,30 +1,31 @@
 #ifndef FTP_SERVICE_HPP
 #define FTP_SERVICE_HPP
 
-#include "protocol/connection_interfaces.hpp"
+#include "business/file_service.hpp"
+#include "business/user_service.hpp"
 #include <string>
 
-// Business logic: users, authorization and file operations.
-// This layer does not create or manipulate operating-system sockets.
+// Stable facade used by the protocol layer; delegates each use-case to a focused service.
 class FtpService {
 public:
-    FtpService() = default;
+    FtpService();
+    FtpService(const FtpService&) = delete;
+    FtpService& operator=(const FtpService&) = delete;
 
-    bool authenticate(const std::string& user, const std::string& password) const;
-    std::string registerUser(const std::string& folder, const std::string& password);
-    bool userExists(const std::string& user) const;
-    bool prepareUserStorage(const std::string& user) const;
-
-    bool storeFile(const std::string& user, const std::string& filename,
-                   IDataConnection& dataConnection) const;
-    bool retrieveFile(const std::string& user, const std::string& filename,
-                      IDataConnection& dataConnection) const;
-    bool sendDirectoryListing(const std::string& user,
-                              IDataConnection& dataConnection) const;
+    bool databaseAvailable() const;
+    bool authenticate(const std::string& user, const std::string& password);
+    std::string registerUser(const std::string& username, const std::string& password);
+    bool userExists(const std::string& user);
+    bool prepareUserStorage(const std::string& user);
+    bool storeFile(const std::string& user, const std::string& filename, IDataConnection& dataConnection);
+    bool retrieveFile(const std::string& user, const std::string& filename, IDataConnection& dataConnection);
+    bool deleteFile(const std::string& user, const std::string& filename);
+    bool sendDirectoryListing(const std::string& user, IDataConnection& dataConnection);
 
 private:
-    std::string userRoot(const std::string& user) const;
-    std::string safeFilename(const std::string& filename) const;
+    PostgresRepository repository_;
+    UserService users_;
+    FileService files_;
 };
 
 #endif
