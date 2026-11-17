@@ -1,6 +1,7 @@
 #include "protocol/ftp_handler.hpp"
 #include "business/ftp_service.hpp"
-
+#include <string>
+#include <algorithm>
 #include <sstream>
 
 bool FtpHandler::handlePasv(IConnection& conn) {
@@ -11,18 +12,14 @@ bool FtpHandler::handlePasv(IConnection& conn) {
         return true;
     }
 
-    unsigned int a = 127, b = 0, c = 0, d = 1;
-    char dot1 = 0, dot2 = 0, dot3 = 0;
-    std::istringstream ip(endpoint->ip);
-    if (!(ip >> a >> dot1 >> b >> dot2 >> c >> dot3 >> d)) {
-        sendResponse(conn, 425, "Invalid passive address");
-        return true;
-    }
+    std::string ip = endpoint->ip;
+    std::replace(ip.begin(), ip.end(), '.', ',');
+
     const unsigned int p1 = endpoint->port / 256;
     const unsigned int p2 = endpoint->port % 256;
-    sendResponse(conn, 227, "Entering Passive Mode (" + std::to_string(a) + "," +
-                 std::to_string(b) + "," + std::to_string(c) + "," + std::to_string(d) + "," +
-                 std::to_string(p1) + "," + std::to_string(p2) + ")");
+
+    sendResponse(conn, 227, "Entering Passive Mode (" + ip + "," +
+             std::to_string(p1) + "," + std::to_string(p2) + ")");
     return true;
 }
 
