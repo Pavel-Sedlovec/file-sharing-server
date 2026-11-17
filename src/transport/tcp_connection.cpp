@@ -75,7 +75,7 @@ std::optional<PassiveEndpoint> tcp_connection::openPassiveDataChannel() {
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = 0;
     if (::bind(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0 ||
         ::listen(fd, 1) < 0) {
@@ -89,7 +89,7 @@ std::optional<PassiveEndpoint> tcp_connection::openPassiveDataChannel() {
         return std::nullopt;
     }
     passive_listen_fd_ = fd;
-    return PassiveEndpoint{"127.0.0.1", ntohs(addr.sin_port)};
+    return PassiveEndpoint{"172.23.196.62", ntohs(addr.sin_port)};
 }
 
 bool tcp_connection::hasPassiveDataChannel() const {

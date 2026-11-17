@@ -11,7 +11,7 @@ std::int64_t toInt64(const char* value) {
 }
 
 PostgresRepository::PostgresRepository() {
-    const char* conninfo = std::getenv("FTP_PG_CONNINFO");
+    const char* conninfo = "";
     connection_ = PQconnectdb(conninfo ? conninfo : "");
     if (!isConnected()) {
         std::cerr << "PostgreSQL connection failed: "
