@@ -1,4 +1,8 @@
 #include "server.hpp"
+#include "logger.hpp"
+#include <arpa/inet.h>
+#include <cerrno>
+#include <string>
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -41,6 +45,12 @@ bool send_all(int sock, const char* data, size_t len) {
 
 int start_client(int client_sock){
     char buffer[BUFFER_SIZE];
+    sockaddr_in peer{};
+    socklen_t peer_len = sizeof(peer);
+    char peer_ip[INET_ADDRSTRLEN] = "unknown";
+    if (getpeername(client_sock, reinterpret_cast<sockaddr*>(&peer), &peer_len) == 0)
+        inet_ntop(AF_INET, &peer.sin_addr, peer_ip, sizeof(peer_ip));
+    app_log::info(std::string("Client connected: ") + peer_ip);
 
     struct timeval tv{};
     tv.tv_sec = 300;
@@ -66,6 +76,7 @@ int start_client(int client_sock){
         }
     }
     handler->onDisconnect();
+    app_log::info(std::string("Client disconnected: ") + peer_ip);
     delete handler;
     conn.close();
     return 0;
@@ -80,6 +91,7 @@ void setup_signals() {
 int create_and_bind_socket(sockaddr_in& server_addr) {
     int server_sock = socket(AF_INET, SOCK_STREAM, 0);
     if(server_sock < 0){
+        app_log::error("Failed to create listening socket");
         return -1;
     }
     
@@ -92,6 +104,7 @@ int create_and_bind_socket(sockaddr_in& server_addr) {
 
     int ret = bind(server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr));  
     if(ret < 0){
+        app_log::error(std::string("Failed to bind port ") + std::to_string(SERVER_PORT));
         close(server_sock);
         return -1;
     }
@@ -99,6 +112,7 @@ int create_and_bind_socket(sockaddr_in& server_addr) {
 }
 
 void run_server(int server_sock) {
+    app_log::info(std::string("Server listening on port ") + std::to_string(SERVER_PORT));
     sockaddr_in client_addr;
     socklen_t client_size = sizeof(client_addr);
 
@@ -109,6 +123,7 @@ void run_server(int server_sock) {
             if (errno == EINTR) {
                 break;
             }
+            app_log::error(std::string("accept() failed: errno=") + std::to_string(errno));
             continue;
         }
         std::thread(start_client, client_sock).detach();
